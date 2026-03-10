@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ChangeCalculatorApp.Controllers;
+namespace ChangeCalculatorApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]

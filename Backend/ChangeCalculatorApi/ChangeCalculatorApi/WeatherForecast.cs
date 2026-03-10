@@ -1,4 +1,4 @@
-namespace ChangeCalculatorApp;
+namespace ChangeCalculatorApi;
 
 public class WeatherForecast
 {
