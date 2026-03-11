@@ -1,3 +1,4 @@
+using Application.Dtos;
 using Domain.Entities;
 using Domain.Interfaces;
 using System.Text.Json;
@@ -8,26 +9,26 @@ public class TransactionService(ITransactionRepository transactionRepository, IC
 {
     public async Task<IEnumerable<Transaction>> GetAllTransactionHistoryAsync(CancellationToken cancellationToken = default)
     {
-        return await transactionRepository.GetAllAsync() ?? [];
+        return await transactionRepository.GetAllAsync(cancellationToken) ?? [];
     }
     
-    public async Task<Transaction> CreateTransactionAsync(string currencyCode, decimal amountOwed, decimal amountPaid, CancellationToken cancellationToken)
+    public async Task<Transaction> CreateTransactionAsync(TransactionRequestDto request, CancellationToken cancellationToken)
     {
         var currencies = await currencyProvider.GetCurrenciesAsync(cancellationToken);
-        if (!currencies.ContainsKey(currencyCode)) throw new ArgumentException($"Currency {currencyCode} not supported.");
-        if (amountPaid < amountOwed) throw new InvalidOperationException("Amount paid is less than the amount owed.");
+        if (!currencies.ContainsKey(request.CurrencyCode)) throw new ArgumentException($"Currency {request.CurrencyCode} not supported.");
+        if (request.AmountPaid < request.AmountOwed) throw new InvalidOperationException("Amount paid is less than the amount owed.");
 
-        var denominations = currencies[currencyCode];
-        var due = Math.Round(amountPaid - amountOwed, 2);
+        var denominations = currencies[request.CurrencyCode];
+        var changeDue = Math.Round(request.AmountPaid - request.AmountOwed, 2);
 
         var trans = new Transaction()
         {
             TransactionDate = DateTime.UtcNow,
-            CurrencyCode = currencyCode,
-            AmountOwed = amountOwed,
-            AmountPaid = amountPaid,
-            ChangeDue = due,
-            ChangeBreakdown = JsonSerializer.Serialize(GenerateChangeBreakdown(due, denominations))
+            CurrencyCode = request.CurrencyCode,
+            AmountOwed = request.AmountOwed,
+            AmountPaid = request.AmountPaid,
+            ChangeDue = changeDue,
+            ChangeBreakdown = JsonSerializer.Serialize(GenerateChangeBreakdown(changeDue, denominations))
         };
 
         await transactionRepository.AddAsync(trans, cancellationToken);

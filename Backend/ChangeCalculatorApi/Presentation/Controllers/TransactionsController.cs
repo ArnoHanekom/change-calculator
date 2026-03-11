@@ -14,7 +14,7 @@ public class TransactionsController(TransactionService transactionService, ICurr
     {
         try
         {
-            var transaction  = await transactionService.CreateTransactionAsync(request.CurrencyCode, request.AmountOwed, request.AmountPaid, cancellationToken);            
+            var transaction  = await transactionService.CreateTransactionAsync(request, cancellationToken);            
             return Ok(TransactionMapper.ToResponseDto(transaction));
         }
         catch(Exception ex)
