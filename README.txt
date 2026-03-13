@@ -46,6 +46,13 @@ ensure to update the following:
  - in the backend, update the CORS policy to specify and allow the new frontend port.
  - in the frontend, update the environment.ts file to the correct port for the backend API.
 
+Currencies are configured by adding a currency and its denominations in the appsettings.json (in the Presentation project of the backend) file
+under the configuration section called "Currencies".
+Specify the currency code as a string with its denominations as object value (JSON syntax). (E.g. adding the following inside the Currencies
+configuration section will add the currency "ZAR" with denominations for R5, R2, R1, R0.50, R0.20 and R0.10:
+"ZAR": [5.00, 2.00, 1.00, 0.50, 0.20, 0.10].
+Multiple currencies can be added by using a ", " (comma) as deliminator between currencies.
+
 ** DISCLAIMER:
 As this is an assessment and submitted to be used for review and to determine skill only 
 and should not be distributed or shared for any other purposes, I would finally just like to add:
