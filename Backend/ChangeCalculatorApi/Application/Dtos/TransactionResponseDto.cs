@@ -1,5 +1,4 @@
 namespace Application.Dtos;
-
 public record TransactionResponseDto(
     int Id,
     DateTime TransactionDate,

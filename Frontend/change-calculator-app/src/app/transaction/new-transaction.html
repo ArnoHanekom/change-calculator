@@ -1,0 +1,42 @@
+<mat-card class="max-w-lg mx-auto p-6 space-y-6">
+    <h2 class="text-x1 font-bold">New Transaction</h2>
+
+    <form (ngSubmit)="submit()" #form="ngForm" class="space-y-4">
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Currency:</mat-label>
+            <mat-select [(ngModel)]="transaction.currencyCode" name="currencyCode">
+                <mat-option *ngFor="let c of currencies" [value]="c">{{ c }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Amount owed</mat-label>
+            <input matInput type="number" [(ngModel)]="transaction.amountOwed" name="amountOwed">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Amount paid</mat-label>
+            <input matInput type="number" [(ngModel)]="transaction.amountPaid" name="amountPaid">
+        </mat-form-field>
+
+        <button mat-raised-button color="accent" class="w-full mat-accent" tabindex="0">Calculate Change</button>
+    </form>
+
+    <div *ngIf="loading" class="mt-6 flex items-center gap-3 text-indigo-600">
+        <mat-progress-spinner mode="indeterminate" diameter="24"></mat-progress-spinner>
+        <span>Calculating change, please wait...</span>
+    </div>
+
+    <div class="mt-6 border-t pt-3" *ngIf="result?.changeDue !== undefined && result?.changeDue !== null && !loading">
+        <h3 class="text-lg font-semibold mb-2">
+            Change Due: <span class="mat-primary">{{ result.changeDue }}</span>
+        </h3>
+
+        <h4 class="text-md font-medium">Change breakdown:</h4>
+        <mat-list class="space-y-2">
+            <mat-list-item *ngFor="let coin of breakdownKeys" class="flex justify-between">
+                <span class="ml-auto text-gray-700">{{ coin }} x {{ changeBreakdown[coin] }}</span>
+            </mat-list-item>
+        </mat-list>
+    </div>
+</mat-card>

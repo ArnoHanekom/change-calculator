@@ -6,6 +6,14 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAngularClient", policy =>
+    {
+       policy.WithOrigins("http://localhost:4200")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
 builder.Services.AddDbContext<TransactionDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("TransactionDatastore")));
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
@@ -29,6 +37,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
+app.UseCors("AllowAngularClient");
 app.UseHttpsRedirection();
 app.UseSwagger();
 app.UseSwaggerUI();

@@ -13,6 +13,7 @@ public class TransactionRepository(TransactionDbContext context) : ITransactionR
     }
     public async Task<IEnumerable<Transaction>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await context.Transactions.ToListAsync(cancellationToken: cancellationToken);
+        return await context.Transactions.OrderByDescending(t => t.TransactionDate)
+            .ToListAsync(cancellationToken: cancellationToken);
     }
 }

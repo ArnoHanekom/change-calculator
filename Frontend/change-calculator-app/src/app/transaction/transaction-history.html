@@ -1,0 +1,65 @@
+<mat-card class="max-w-4xl mx-auto p-6">
+  <h2 class="text-xl font-bold mb-4">Transaction History</h2>
+
+  <div *ngIf="loading" class="flex items-center gap-3 text-indigo-600 mb-4">
+    <mat-progress-spinner mode="indeterminate" diameter="24"></mat-progress-spinner>
+    <span>Loading history, please wait...</span>
+  </div>
+
+  <!-- Material Table -->
+  <table mat-table [dataSource]="dataSource" class="w-full mb-2">
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef>Date</th>
+      <td mat-cell *matCellDef="let tx">{{ tx.transactionDate | date:'short' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="currency">
+      <th mat-header-cell *matHeaderCellDef>Currency</th>
+      <td mat-cell *matCellDef="let tx">{{ tx.currencyCode }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="changeDue">
+      <th mat-header-cell *matHeaderCellDef>Change Due</th>
+      <td mat-cell *matCellDef="let tx">{{ tx.changeDue }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let tx">
+        <button mat-button color="primary" (click)="viewDetails(tx)">View Details</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayColumns;"></tr>
+  </table>
+
+  <div class="text-sm text-gray-600 mb-2" *ngIf="dataSource.paginator" >
+    Showing {{ dataSource.paginator.pageIndex * dataSource.paginator.pageSize + 1 }}
+    -
+    {{ Math.min((dataSource.paginator.pageIndex + 1) * dataSource.paginator.pageSize, dataSource.data.length) }}
+    of {{ dataSource.data.length}}
+  </div>
+
+  <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+  <!-- Transaction Details -->
+  <div *ngIf="selectedTransaction?.id !== undefined && selectedTransaction?.id !== null" 
+        class="p-4 border rounded bg-gray-50">
+    <h3 class="text-lg font-semibold mb-2">Transaction Details</h3>
+    <p><strong>Date:</strong> {{ selectedTransaction.transactionDate | date:'short' }}</p>
+    <p><strong>Currency:</strong> {{ selectedTransaction.currencyCode }}</p>
+    <p><strong>Amount Owed:</strong> {{ selectedTransaction.amountOwed }}</p>
+    <p><strong>Amount Paid:</strong> {{ selectedTransaction.amountPaid }}</p>
+    <p><strong>Change Due:</strong> {{ selectedTransaction.changeDue }}</p>
+
+    <h4 class="mt-4 font-semibold">Breakdown</h4>
+    <mat-list>
+      <mat-list-item *ngFor="let coin of (selectedTransaction.changeBreakdown | keyvalue)">
+        <span class="ml-auto text-gray-700">{{ coin.key }} x {{ coin.value }}</span>
+      </mat-list-item>
+    </mat-list>
+
+    <button mat-stroked-button color="warn" class="mt-4" (click)="closeDetails()">Close</button>
+  </div>
+</mat-card>
